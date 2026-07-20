@@ -39,7 +39,7 @@ int main() {
             std::cout << "sent: " << payload << '\n';
 
             if (DRONE_STATE == State::Idle) {const std::string payload = "LAUNCH";
-                DRONE_CURRENT_POSE = {
+                Pose DRONE_CURRENT_POSE = {
                     .position = {0.0, 0.0, 0.0},
                     .orientation = {1.0, 0.0, 0.0, 0.0}
                 }
