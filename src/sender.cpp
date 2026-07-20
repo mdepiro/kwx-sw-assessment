@@ -1,6 +1,7 @@
 #include "config.hpp"
 #include "zmq_draft.hpp"
 #include "pose.hpp"
+#include "drone.hpp"
 
 #include <chrono>
 #include <cstdlib>
@@ -30,7 +31,7 @@ int main() {
         //unsigned int seq = 0;
         while (true) {
             std::string payload = std::to_string(static_cast<int>(DRONE_STATE));
-            
+
             zmq::message_t msg{payload.data(), payload.size()};
             msg.set_group(std::string{kwx_auto::kGroup}.c_str());
 
