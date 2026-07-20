@@ -10,12 +10,11 @@ int main() {
         zmq::context_t ctx{1};
         zmq::socket_t dish{ctx, zmq::socket_type::dish};
 
-        // DISH binds; RADIO connects (ZeroMQ UDP pub/sub pattern).
-        dish.bind(std::string{sw_assessment::kEndpoint});
-        dish.join(std::string{sw_assessment::kGroup}.c_str());
+        dish.bind(std::string{kwx_auto::kEndpoint});
+        dish.join(std::string{kwx_auto::kGroup}.c_str());
 
-        std::cout << "receiver: listening on " << sw_assessment::kEndpoint
-                  << " group='" << sw_assessment::kGroup << "'\n";
+        std::cout << "receiver: listening on " << kwx_auto::kEndpoint
+                  << " group='" << kwx_auto::kGroup << "'\n";
 
         while (true) {
             zmq::message_t msg;
