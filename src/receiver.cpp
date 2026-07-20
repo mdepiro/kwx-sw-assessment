@@ -1,10 +1,9 @@
 #include "config.hpp"
+#include "zmq_draft.hpp"
 
 #include <cstdlib>
 #include <iostream>
 #include <string>
-
-#include <zmq.hpp>
 
 int main() {
     try {

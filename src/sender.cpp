@@ -1,12 +1,11 @@
 #include "config.hpp"
+#include "zmq_draft.hpp"
 
 #include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <thread>
-
-#include <zmq.hpp>
 
 int main() {
     try {

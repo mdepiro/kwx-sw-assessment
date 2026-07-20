@@ -16,6 +16,9 @@ target_include_directories(sw_assessment_common
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/third_party/cppzmq
 )
+# Also pass on the command line so draft APIs are visible even if a
+# precompiled header or system include pulls zmq.h in first.
+target_compile_definitions(sw_assessment_common INTERFACE ZMQ_BUILD_DRAFT_API=1)
 target_link_libraries(sw_assessment_common INTERFACE PkgConfig::ZMQ)
 
 add_executable(sender src/sender.cpp)
