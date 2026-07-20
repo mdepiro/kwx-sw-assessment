@@ -9,6 +9,9 @@
 #include <string>
 #include <thread>
 
+using namespace drone;
+using namespace pose;
+
 Pose DRONE_SET_POSE = {
     .position = {0.0, 0.0, 5.0},
     .orientation = {1.0, 0.0, 0.0, 0.0}

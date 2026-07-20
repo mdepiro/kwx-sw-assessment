@@ -4,7 +4,7 @@
 #include <concepts>
 #include <random>
 
-namespace drone {
+namespace pose {
 
 struct Vector3 {
     double x{0.0};
