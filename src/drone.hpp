@@ -23,6 +23,8 @@ inline const pose::Pose INITIAL_POSE{
     .orientation = {1.0, 0.0, 0.0, 0.0},
 };
 
+const double LANDING_THRESHOLD = 0.03; // kill engine at 2 cm from ground
+
 inline bool poses_equal(const pose::Pose& a, const pose::Pose& b) {
     constexpr double eps = 0.05;  // 5 cm
     return std::abs(a.position.z - b.position.z) < eps;
@@ -59,7 +61,7 @@ inline bool poses_equal(const pose::Pose& a, const pose::Pose& b) {
     while(!acheived_target){
         //std::cout << "traj  " << (output.position.z + 0.1) << '\n';
         output.position.z -= 0.1;
-        if (output.position.z >= target.position.z) {
+        if (output.position.z <= target.position.z + LANDING_THRESHOLD) {
             output.position.z = INITIAL_POSE.position.z;
             acheived_target = true;
             break;

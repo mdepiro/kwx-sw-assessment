@@ -11,8 +11,13 @@
 
 namespace {
 
-const int TIMEOUT = 2000; //milliseconds
-auto start_time = 0;
+const int64_t TIMEOUT = 2000; //milliseconds
+int64_t elapsed_time = 0;
+
+using TimePoint = std::chrono::steady_clock::time_point;
+TimePoint current_time;
+
+auto start_time = std::chrono::steady_clock::now();
 
 const pose::Pose TARGET_POSE{
     .position = {0.0, 0.0, 5.0},
@@ -44,17 +49,21 @@ pose::Pose drone_action(drone::State drone_state, pose::Pose current_pose) {
         break;
         case drone::State::Launching:
             start_time = std::chrono::steady_clock::now();
-            pose = drone::launch_trajectory(current_pose, TARGET_POSE); \\returns ideal next step in traj.
-            pose = get_pose.generate(pose); \\get the actual pose
+            pose = drone::launch_trajectory(current_pose, TARGET_POSE); //returns ideal next step in traj.
+            pose = get_pose.generate(pose); //get the actual pose
         break;
         case drone::State::Launched:
-            if ((std::chrono::steady_clock::now() - start_time) >= TIMEOUT) {
+            current_time = std::chrono::steady_clock::now();
+            elapsed_time = 
+                std::chrono::duration_cast<std::chrono::milliseconds>(current_time - start_time)
+                .count();
+            if (elapsed_time >= TIMEOUT) {
                 drone::DRONE_STATE = drone::State::Landing;
             }
             pose = current_pose;
         break;
         case drone::State::Landing:
-            pose = drone::launch_trajectory(current_pose, drone::INITIAL_POSE);
+            pose = drone::land_trajectory(current_pose, drone::INITIAL_POSE);
         break;
         case drone::State::Landed:
             drone::DRONE_STATE = drone::State::Idle;
