@@ -17,27 +17,27 @@ enum class State {
 
 inline State DRONE_STATE{State::Idle};
 
-inline const Pose INITIAL_POSE {
+inline const pose::Pose INITIAL_POSE{
     .position = {0.0, 0.0, 0.0},
     .orientation = {1.0, 0.0, 0.0, 0.0},
 };
 
-inline bool poses_equal(const Pose& a, const Pose& b) {
-    constexpr double eps = 0.05; //threshold of 5 cm
+inline bool poses_equal(const pose::Pose& a, const pose::Pose& b) {
+    constexpr double eps = 0.05;  // 5 cm
     return std::abs(a.position.z - b.position.z) < eps;
 }
 
 /// Climb from INITIAL_POSE toward `target` by +0.1 m in z each step
-/// until the output pose equals the input target.
-[[nodiscard]] inline Pose launch_trajectory(const Pose& target) {
-    Pose output = INITIAL_POSE;
+/// until the output pose matches the target height.
+[[nodiscard]] inline pose::Pose launch_trajectory(const pose::Pose& target) {
+    pose::Pose output = INITIAL_POSE;
     output.orientation = target.orientation;
     output.position.x = target.position.x;
     output.position.y = target.position.y;
 
     for (; !poses_equal(output, target); output.position.z += 0.1) {
         if (output.position.z >= target.position.z) {
-            output.position.z -= 0.1;
+            output.position.z = target.position.z;
             break;
         }
     }

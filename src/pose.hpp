@@ -96,4 +96,4 @@ private:
     std::mt19937_64 rng_;
 };
 
-} // namespace drone
+}  // namespace pose
