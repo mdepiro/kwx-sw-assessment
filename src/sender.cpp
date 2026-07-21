@@ -16,6 +16,7 @@ const pose::Pose TARGET_POSE{
     .orientation = {1.0, 0.0, 0.0, 0.0},
 };
 
+pose::GetPose get_pose;
 } 
 
 void send_msg(zmq::socket_t& radio, pose::Pose current_pose) {
@@ -68,10 +69,13 @@ int main() {
         send_msg(radio, current_pose);
 
         while (true) {
+            //get current pose
+            current_pose = get_pose.generate();
+            //poll the drone for an action
             current_pose = drone_action(drone::DRONE_STATE, current_pose);
-
+            //send data
             send_msg(radio, current_pose);
-
+            //rate control
             std::this_thread::sleep_for(std::chrono::seconds{1});
         }
 
