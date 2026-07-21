@@ -70,7 +70,7 @@ int main() {
 
         while (true) {
             //get current pose
-            current_pose = get_pose.generate();
+            current_pose = get_pose.generate(current_pose);
             //poll the drone for an action
             current_pose = drone_action(drone::DRONE_STATE, current_pose);
             //send data

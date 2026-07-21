@@ -63,7 +63,8 @@ public:
         : rng_(std::random_device{}()) {}
 
     ///Generate noisy values
-    [[nodiscard]] Pose generate(const Pose& input_pose, const PoseNoiseConfig& noise) {
+    [[nodiscard]] Pose generate(const Pose& input_pose,
+                                const PoseNoiseConfig& noise = PoseNoiseConfig{}) {
         std::normal_distribution<double> dist_px(0.0, noise.pos_std_x);
         std::normal_distribution<double> dist_py(0.0, noise.pos_std_y);
         std::normal_distribution<double> dist_pz(0.0, noise.pos_std_z);
