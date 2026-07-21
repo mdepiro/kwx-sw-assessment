@@ -11,6 +11,9 @@
 
 namespace {
 
+const int TIMEOUT = 2000; //milliseconds
+auto start_time = 0;
+
 const pose::Pose TARGET_POSE{
     .position = {0.0, 0.0, 5.0},
     .orientation = {1.0, 0.0, 0.0, 0.0},
@@ -40,16 +43,21 @@ pose::Pose drone_action(drone::State drone_state, pose::Pose current_pose) {
             drone::DRONE_STATE = drone::State::Launching;
         break;
         case drone::State::Launching:
-            pose = drone::launch_trajectory(current_pose, TARGET_POSE);
+            start_time = std::chrono::steady_clock::now();
+            pose = drone::launch_trajectory(current_pose, TARGET_POSE); \\returns ideal next step in traj.
+            pose = get_pose.generate(pose); \\get the actual pose
         break;
         case drone::State::Launched:
+            if ((std::chrono::steady_clock::now() - start_time) >= TIMEOUT) {
+                drone::DRONE_STATE = drone::State::Landing;
+            }
             pose = current_pose;
         break;
         case drone::State::Landing:
-
+            pose = drone::launch_trajectory(current_pose, drone::INITIAL_POSE);
         break;
         case drone::State::Landed:
-
+            drone::DRONE_STATE = drone::State::Idle;
         break;
     }
     return pose;

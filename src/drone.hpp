@@ -49,4 +49,24 @@ inline bool poses_equal(const pose::Pose& a, const pose::Pose& b) {
     return output;
 }
 
+[[nodiscard]] inline pose::Pose land_trajectory(pose::Pose& output, const pose::Pose& target) {
+    bool acheived_target = poses_equal(output, target);
+
+    output.orientation = target.orientation;
+    output.position.x = target.position.x;
+    output.position.y = target.position.y;
+
+    while(!acheived_target){
+        //std::cout << "traj  " << (output.position.z + 0.1) << '\n';
+        output.position.z -= 0.1;
+        if (output.position.z >= target.position.z) {
+            output.position.z = INITIAL_POSE.position.z;
+            acheived_target = true;
+            break;
+        } else {break;}
+    }
+    if (acheived_target) {DRONE_STATE = State::Landed;}
+    return output;
+}
+
 }  // namespace drone
