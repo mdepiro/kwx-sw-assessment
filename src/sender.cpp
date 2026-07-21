@@ -11,7 +11,7 @@
 
 namespace {
 
-const int64_t TIMEOUT = 2000; //milliseconds
+const int64_t TIMEOUT = 5000; //milliseconds
 int64_t elapsed_time = 0;
 
 using TimePoint = std::chrono::steady_clock::time_point;
@@ -30,14 +30,15 @@ pose::GetPose get_pose;
 void send_msg(zmq::socket_t& radio, pose::Pose current_pose) {
 
     const std::string payload =
-        std::to_string(static_cast<int>(drone::DRONE_STATE));
+        drone::FlightState.at(drone::DRONE_STATE);
+        //std::to_string(static_cast<int>(drone::DRONE_STATE));
 
         zmq::message_t msg{payload.data(), payload.size()};
         msg.set_group(std::string{kwx_auto::kGroup}.c_str());
 
         radio.send(msg, zmq::send_flags::none);
-        std::cout << "sent: state=" << payload
-                << " z=" << current_pose.position.z << '\n';
+        std::cout << "sent: " << payload
+                << " z= " << current_pose.position.z << '\n';
 }
 
 pose::Pose drone_action(drone::State drone_state, pose::Pose current_pose) {

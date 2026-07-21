@@ -4,6 +4,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <unordered_map>
 
 namespace drone {
 
@@ -14,6 +15,14 @@ enum class State {
     Launched = 2,
     Landing = 3,
     Landed = 4,
+};
+
+const std::unordered_map<State, std::string> FlightState{
+    {State::Idle,          "Idle"},
+    {State::Launching,       "Takeoff"},
+    {State::Launched,    "Flying"},
+    {State::Landing,       "Landing"},
+    {State::Landed,     "Landed"}
 };
 
 inline State DRONE_STATE{State::Idle};
