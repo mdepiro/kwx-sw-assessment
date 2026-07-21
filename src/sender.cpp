@@ -18,7 +18,8 @@ const pose::Pose TARGET_POSE{
 
 } 
 
-void send_msg(zmq::socket_t& radio, drone::State drone_state, pose::Pose current_pose) {
+void send_msg(zmq::socket_t& radio, pose::Pose current_pose) {
+
     const std::string payload =
         std::to_string(static_cast<int>(drone::DRONE_STATE));
 
@@ -30,8 +31,27 @@ void send_msg(zmq::socket_t& radio, drone::State drone_state, pose::Pose current
                 << " z=" << current_pose.position.z << '\n';
 }
 
-pose::Pose drone_action() {
-    
+pose::Pose drone_action(drone::State drone_state, pose::Pose current_pose) {
+    pose::Pose pose;
+    switch(drone_state) {
+        case drone::State::Idle:
+            pose = current_pose;
+            drone::DRONE_STATE = drone::State::Launching;
+        break;
+        case drone::State::Launching:
+            pose = drone::launch_trajectory(current_pose, TARGET_POSE);
+        break;
+        case drone::State::Launched:
+            pose = current_pose;
+        break;
+        case drone::State::Landing:
+
+        break;
+        case drone::State::Landed:
+
+        break;
+    }
+    return pose;
 }
 
 int main() {
@@ -43,24 +63,18 @@ int main() {
 
         std::cout << "sender: publishing to " << kwx_auto::kEndpoint
                   << " group='" << kwx_auto::kGroup << "'\n";
-        
+
         pose::Pose current_pose = drone::INITIAL_POSE;
+        send_msg(radio, current_pose);
 
         while (true) {
-            send_msg(radio, drone::DRONE_STATE, current_pose);
-
             current_pose = drone_action(drone::DRONE_STATE, current_pose);
-            if (drone::DRONE_STATE == drone::State::Idle) {
-                //Launch the drone
-                drone::DRONE_STATE = drone::State::Launching;
-                continue;
-            } else if (drone::DRONE_STATE == drone::State::Launching) {
-                current_pose = drone::launch_trajectory(TARGET_POSE);
-                drone::DRONE_STATE = drone::State::Launched;
-            }
+
+            send_msg(radio, current_pose);
 
             std::this_thread::sleep_for(std::chrono::seconds{1});
         }
+
     } catch (const zmq::error_t& e) {
         std::cerr << "sender zmq error: " << e.what() << '\n';
         return EXIT_FAILURE;

@@ -3,6 +3,7 @@
 #include "pose.hpp"
 
 #include <cmath>
+#include <iostream>
 
 namespace drone {
 
@@ -27,21 +28,24 @@ inline bool poses_equal(const pose::Pose& a, const pose::Pose& b) {
     return std::abs(a.position.z - b.position.z) < eps;
 }
 
-/// Climb from INITIAL_POSE toward `target` by +0.1 m in z each step
-/// until the output pose matches the target height.
-[[nodiscard]] inline pose::Pose launch_trajectory(const pose::Pose& target) {
-    pose::Pose output = INITIAL_POSE;
+/// Climb from INITIAL_POSE toward target by +0.1 m in z each step
+/// until the drone has reached the target height.
+[[nodiscard]] inline pose::Pose launch_trajectory(pose::Pose& output, const pose::Pose& target) {
+    bool acheived_target = poses_equal(output, target);
+
     output.orientation = target.orientation;
     output.position.x = target.position.x;
     output.position.y = target.position.y;
 
-    for (; !poses_equal(output, target); output.position.z += 0.1) {
+    while(!acheived_target){
+        //std::cout << "traj  " << (output.position.z + 0.1) << '\n';
+        output.position.z += 0.1;
         if (output.position.z >= target.position.z) {
-            output.position.z = target.position.z;
+            output.position.z -= 0.05;
             break;
-        }
+        } else {break;}
     }
-
+    if (acheived_target) {DRONE_STATE = State::Launched;}
     return output;
 }
 
