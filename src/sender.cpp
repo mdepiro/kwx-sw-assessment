@@ -18,7 +18,7 @@ const pose::Pose TARGET_POSE{
 
 } 
 
-void send_msg(drone::State drone_state, pose::Pose curr_pose) {
+void send_msg(zmq::socket_t& radio, drone::State drone_state, pose::Pose current_pose) {
     const std::string payload =
         std::to_string(static_cast<int>(drone::DRONE_STATE));
 
@@ -43,7 +43,7 @@ int main() {
         pose::Pose current_pose = drone::INITIAL_POSE;
 
         while (true) {
-            send_msg(drone::DRONE_STATE, current_pose);
+            send_msg(radio, drone::DRONE_STATE, current_pose);
             /* const std::string payload =
                 std::to_string(static_cast<int>(drone::DRONE_STATE));
 
