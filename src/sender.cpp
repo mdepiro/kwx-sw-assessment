@@ -25,20 +25,25 @@ const pose::Pose TARGET_POSE{
 };
 
 pose::GetPose get_pose;
+
+struct Payload {
+    drone::State state{};
+    pose::Pose pose{};
+};
 } 
 
 void send_msg(zmq::socket_t& radio, pose::Pose current_pose) {
+    const Payload payload{
+        .state = drone::DRONE_STATE,
+        .pose = current_pose,
+    };
 
-    const std::string payload =
-        drone::FlightState.at(drone::DRONE_STATE);
-        //std::to_string(static_cast<int>(drone::DRONE_STATE));
+    zmq::message_t msg{&payload, sizeof(payload)};
+    msg.set_group(std::string{kwx_auto::kGroup}.c_str());
 
-        zmq::message_t msg{payload.data(), payload.size()};
-        msg.set_group(std::string{kwx_auto::kGroup}.c_str());
-
-        radio.send(msg, zmq::send_flags::none);
-        std::cout << "sent: " << payload
-                << " z= " << current_pose.position.z << '\n';
+    radio.send(msg, zmq::send_flags::none);
+    std::cout << "sent: state=" << drone::FlightState.at(payload.state)
+              << " z=" << payload.pose.position.z << '\n';
 }
 
 pose::Pose drone_action(drone::State drone_state, pose::Pose current_pose) {
