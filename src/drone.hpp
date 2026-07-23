@@ -32,6 +32,11 @@ inline const pose::Pose INITIAL_POSE{
     .orientation = {1.0, 0.0, 0.0, 0.0},
 };
 
+struct Payload {
+    State state{};
+    pose::Pose pose{};
+};
+
 const double LANDING_THRESHOLD = 0.03; // kill engine at 2 cm from ground
 
 inline bool poses_equal(const pose::Pose& a, const pose::Pose& b) {

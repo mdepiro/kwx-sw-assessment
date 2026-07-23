@@ -25,15 +25,10 @@ const pose::Pose TARGET_POSE{
 };
 
 pose::GetPose get_pose;
-
-struct Payload {
-    drone::State state{};
-    pose::Pose pose{};
-};
 } 
 
 void send_msg(zmq::socket_t& radio, pose::Pose current_pose) {
-    const Payload payload{
+    const drone::Payload payload{
         .state = drone::DRONE_STATE,
         .pose = current_pose,
     };

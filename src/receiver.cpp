@@ -1,6 +1,8 @@
 #include "config.hpp"
+#include "drone.hpp"
 #include "zmq_draft.hpp"
 
+#include <cstring>
 #include <cstdlib>
 #include <iostream>
 #include <string>
@@ -22,9 +24,16 @@ int main() {
                 continue;
             }
 
-            const std::string payload{static_cast<char*>(msg.data()), msg.size()};
-            std::cout << "recv group='" << msg.group() << "' payload='" << payload
-                      << "'\n";
+            if (msg.size() != sizeof(drone::Payload)) {
+                std::cerr << "recv: unexpected payload size " << msg.size() << '\n';
+                continue;
+            }
+
+            drone::Payload payload{};
+            std::memcpy(&payload, msg.data(), sizeof(payload));
+
+            std::cout << "recv: state=" << drone::FlightState.at(payload.state)
+                      << " z=" << payload.pose.position.z << '\n';
         }
     } catch (const zmq::error_t& e) {
         std::cerr << "receiver zmq error: " << e.what() << '\n';
