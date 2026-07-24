@@ -8,7 +8,24 @@
 #include <iostream>
 #include <string>
 
-//TODO: drone::Payload get_msg() {}
+drone::Payload get_msg(zmq::socket_t& dish) {
+    zmq::message_t msg;
+            
+            //creates payload object and places the msg.data() into the payload
+            drone::Payload payload{};
+
+            if (!dish.recv(msg, zmq::recv_flags::none)) {
+                payload.pose.orientation.w = NAN;
+            }
+
+            if (msg.size() != sizeof(drone::Payload)) {
+                std::cerr << "recv: unexpected payload size " << msg.size() << '\n';
+                payload.pose.orientation.w = NAN;
+            }
+
+            if(payload.pose.orientation.w != NAN) std::memcpy(&payload, msg.data(), sizeof(payload)); 
+            return payload;
+}
 
 int main() {
     try {
@@ -22,23 +39,14 @@ int main() {
                   << " group='" << kwx_auto::kGroup << "'\n";
 
         //TODO: MovingAverage is a class from the filter header
+        filter::MovingAverage avg;
 
         while (true) {
-            zmq::message_t msg;
-            if (!dish.recv(msg, zmq::recv_flags::none)) {
-                continue;
-            }
-
-            if (msg.size() != sizeof(drone::Payload)) {
-                std::cerr << "recv: unexpected payload size " << msg.size() << '\n';
-                continue;
-            }
-            
-            //creates payload object and places the msg.data() into the payload
-            drone::Payload payload{};
-            std::memcpy(&payload, msg.data(), sizeof(payload)); 
+            drone::Payload payload = get_msg(dish);
+            if(payload.pose.orientation.w == NAN) continue;
             
             //TODO: implement filtering for variable filtered_z
+            double filtered_z = avg.update(payload.pose.position.z);
 
             std::cout << "recv: state=" << drone::FlightState.at(payload.state)
                       << " z=" << payload.pose.position.z
