@@ -31,9 +31,11 @@ int main() {
                 std::cerr << "recv: unexpected payload size " << msg.size() << '\n';
                 continue;
             }
-
+            
+            //creates payload object and places the msg.data() into the payload
             drone::Payload payload{};
-            std::memcpy(&payload, msg.data(), sizeof(payload));
+            std::memcpy(&payload, msg.data(), sizeof(payload)); 
+            
             const double filtered_z = z_filter.update(payload.pose.position.z);
 
             std::cout << "recv: state=" << drone::FlightState.at(payload.state)
