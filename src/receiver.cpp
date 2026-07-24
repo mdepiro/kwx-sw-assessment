@@ -8,6 +8,8 @@
 #include <iostream>
 #include <string>
 
+//TODO: drone::Payload get_msg() {}
+
 int main() {
     try {
         zmq::context_t ctx{1};
@@ -19,7 +21,7 @@ int main() {
         std::cout << "receiver: listening on " << kwx_auto::kEndpoint
                   << " group='" << kwx_auto::kGroup << "'\n";
 
-        filter::MovingAverage z_filter;
+        //TODO: MovingAverage is a class from the filter header
 
         while (true) {
             zmq::message_t msg;
@@ -36,7 +38,7 @@ int main() {
             drone::Payload payload{};
             std::memcpy(&payload, msg.data(), sizeof(payload)); 
             
-            const double filtered_z = z_filter.update(payload.pose.position.z);
+            //TODO: implement filtering for variable filtered_z
 
             std::cout << "recv: state=" << drone::FlightState.at(payload.state)
                       << " z=" << payload.pose.position.z
