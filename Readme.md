@@ -23,14 +23,15 @@ cmake --build build
 ## Assessment Instructions:
 ## Use any tools, but explain your work and solution process.
 ## Ask questions! This is a collaboration session and there may be new 
-1) Build the code. Run the sender service and the receiver service.
+0) Create a branch from assessment1, use [your name]-assessment1, and switch into it.
+1) Build the code. (only run the second cmake command above.)
 2) Filtering:
     2.1 In the filter.hpp is a class called MovingAverage which has a method update which returns \
         the 10-sample moving average for the given parameter. Implement this method for pose.position.z \
         in the `receiver.cpp` service.
     2.2 Build and run to see how the filter affects the z position
 3) Cleanup the Receiver:
-    3.1 Look at the while loop in `sender.cpp` it is clean and easy to read what steps it is doing.
-    3.2 create a method `get_msg(){}` to contain the receiving message code and streamline the loop.
-    HINT: in `sender.cpp` the `send_msg` method takes arguments in and returns nothing. `get_msg` will
+    3.1 Look at the main runner loop in `sender.cpp` it is clean and easy to read the order of operations. \
+    3.2 create a method `get_msg(){}` to contain the receiving message code and streamline the loop. \
+    HINT: in `sender.cpp` the `send_msg` method takes arguments in and returns nothing. `get_msg` will \
     return a type `drone::Payload` 
