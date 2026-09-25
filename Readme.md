@@ -24,7 +24,7 @@ cmake --build build
 ## Use any tools, but explain your work and solution process.
 ## Ask questions! This is a collaboration session and there may be new 
 0) Create a branch from assessment1, use [your name]-assessment1, and switch into it.
-1) Build the code. (only run the second cmake command above.)
+1) Build the code.
 2) Filtering:
     2.1 In the filter.hpp is a class called MovingAverage which has a method update which returns \
         the 10-sample moving average for the given parameter. Implement this method for pose.position.z \
