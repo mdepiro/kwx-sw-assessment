@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 
+
 namespace filter {
 
 /// Running average over the most recent N samples (default: 10).
