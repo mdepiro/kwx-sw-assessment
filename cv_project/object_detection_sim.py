@@ -25,7 +25,12 @@ def simulate_detector_predictions():
     return boxes, scores
 
 def calculate_iou(boxes1: torch.Tensor, boxes2: torch.Tensor) -> torch.Tensor:
-    """Computes pairwise Intersection over Union (IoU) between two sets of boxes."""
+    """
+    Computes pairwise IoU between two sets of bounding boxes.
+    boxes1: Tensor of shape (N, 4) in (x1, y1, x2, y2) format
+    boxes2: Tensor of shape (M, 4) in (x1, y1, x2, y2) format
+    Returns: Tensor of shape (N, M)
+    """
     # Broadcasting coordinates: (N, 1, 4) vs (1, M, 4)
     x1 = torch.max(boxes1[:, 0].unsqueeze(1), boxes2[:, 0].unsqueeze(0))
     y1 = torch.max(boxes1[:, 1].unsqueeze(1), boxes2[:, 1].unsqueeze(0))
@@ -41,9 +46,12 @@ def calculate_iou(boxes1: torch.Tensor, boxes2: torch.Tensor) -> torch.Tensor:
     
     # Union area = Area1 + Area2 - Intersection
     union = area1.unsqueeze(1) + area2.unsqueeze(0) - intersection
-    
-    # Numerical stability division
-    return intersection / torch.clamp(union, min=1e-6)
+
+    # TODO: calculate the numerical stability division and return the resultant tensor.
+    """
+    HINT: This calculates the final Intersection over Union (IoU) ratio while safeguarding against a critical math error: division by zero.
+    """ 
+    pass
 
 def non_max_suppression(boxes: torch.Tensor, scores: torch.Tensor, iou_threshold: float) -> torch.Tensor:
     """
@@ -53,26 +61,22 @@ def non_max_suppression(boxes: torch.Tensor, scores: torch.Tensor, iou_threshold
     if boxes.numel() == 0:
         return torch.empty((0,), dtype=torch.long)
     
-    # Sort boxes by confidence score in descending order
+    # Sort scores descending
     order = torch.argsort(scores, descending=True)
     keep = []
     
     while order.numel() > 0:
-        # Pick the index of the box with the highest remaining score
-        idx = order[0].item()
-        keep.append(idx)
-        
+        # TODO: From `order` get the index of the box with the highest remaining score, add to 'keep'
+
         if order.numel() == 1:
             break
-            
-        # Compute IoU between the top box and all remaining boxes
-        top_box = boxes[idx].unsqueeze(0)
-        remaining_boxes = boxes[order[1:]]
-        iou = calculate_iou(top_box, remaining_boxes).squeeze(0)
+        
+        # TODO: Compute IoU between the top box and all remaining boxes in 'order'
         
         # Keep only boxes that have an IoU strictly below the threshold
         mask = iou <= iou_threshold
         order = order[1:][mask]
+        pass
         
     return torch.tensor(keep, dtype=torch.long)
 

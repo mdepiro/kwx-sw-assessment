@@ -3,6 +3,8 @@ Package dependencies for the project are already installed.
 
 Working project is entirely in the object_detection_sim.py file
 
+There are 3 TODO's make sure to read instructions and hints.
+
 ___________________________________________________________________
 OUTPUT:
 
